@@ -25,7 +25,7 @@ Then compile to produce the rat database and source file that will be named `but
 
 ```
 git clone git@github.com:LSexton2396/BUTTON-RAT2.git
-cd BUTTON-RAT2
+cd BUTTON-RAT2/
 ./rename.sh button
 make
 ```
