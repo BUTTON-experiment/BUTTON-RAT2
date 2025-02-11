@@ -1,1 +1,1 @@
-# BUTTONexperiment
+# RAT-PAC II BUTTON experiment
