@@ -24,7 +24,7 @@ Simply clone this repository and run the script `./rename.sh button`.
 Then compile to produce the rat database and source file that will be named `button.sh`.
 
 ```
-git clone git@github.com:LSexton2396/BUTTONexperiment.git
+git clone git@github.com:LSexton2396/BUTTON-RAT2.git
 ./rename.sh button
 make
 ```
