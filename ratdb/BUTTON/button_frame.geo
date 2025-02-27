@@ -128,14 +128,14 @@ valid_begin: [0, 0],
 valid_end: [0, 0],
 mother: "detector_veto1",
 type: "tube",
-r_max: 1690.0, // changed to accommodate 0.5m-thick layer of concrete on walls (L. Kneale)
-size_z: 1452.5, // changed to put tarp behind washer plates
+r_max: 1780., //662.5, // changed to accommodate 0.5m-thick layer of concrete on walls (L. Kneale)
+size_z: 1500., //1300.0, // changed to put tarp behind washer plates // r + z both changed to put tarp completely around encapsulations (Temp?) JG
 position: [0.0, 0.0, 0.0],
 material: "polypropylene",
 //color: [1.,1.,0.,1.0],
-color: [0.01,0.01,0.01,0.8],
+color: [0.2,0.2,0.9,0.2],
 drawstyle: "solid",
-invisible: 0 // omitted for visualization
+//invisible: 0 // omitted for visualization
 }
 {
 name: "GEO",
@@ -144,8 +144,8 @@ valid_begin: [0, 0],
 valid_end: [0, 0],
 mother: "black_sheet",
 type: "tube",
-r_max: 1687.5, // changed to put tarp behind washer plates
-size_z: 1450.0,
+r_max: 1660.0, // changed to put tarp behind washer plates
+size_z: 1300.0, // r + z both changed to put tarp completely around encapsulations (Temp?) JG
 position: [0.0, 0.0, 0.0],
 material: "doped_water",
 color: [0.2,0.2,0.9,0.2],
@@ -196,7 +196,7 @@ volume1: "detector_veto1",
 volume2: "tank",
 reverse: 1, //0 only considers photons from a->b, 1 does both directions
 //surface: "tank_edge", /// changed here 
-surface: "nonreflective_tarp",
+surface: "reflective_tarp",
 }
 {
 name: "GEO",
@@ -231,6 +231,7 @@ orient_point: [0.,0.,0.],
 color: [0.3,0.5, 0.0, 0.2],
 encapsulation: 0,
 invisible: 1 // omitted for visualization
+encapsulation: 0
 }
 //////////////////////////////// PSUP /////////////////////////////
 {
