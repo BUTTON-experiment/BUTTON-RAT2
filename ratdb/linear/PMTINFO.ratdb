@@ -1,0 +1,14 @@
+{
+//// Total number of inner PMTs : 2
+//// Total number of veto PMTs : 2
+"name": "PMTINFO",
+"valid_begin": [0],
+"valid_end": [2],
+"x": [990.,0.00],
+"y": [0., 0.0],
+"z": [0.0,960.0],
+"dir_x": [-1.0, 0.0],
+"dir_y": [0.0, 0.0],
+"dir_z": [0.0,-1.0],
+"type": [1,1],
+}
