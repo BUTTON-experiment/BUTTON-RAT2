@@ -6,9 +6,7 @@ Please note that some of these files already exist in RAT-PAC so if you wanted t
 CMakeLists.txt
 
 **Place in** `src/geo/src`:
-GeoBuilder.cc,
-GeoLiner.cc,
-GeoLinerHex.cc
+GeoBuilder.cc (This should be the same as the original, so if its not been been modified can skip)  
 
 **Place in** `src/geo/src/pmt`:
 EncapsulatedPMTConstruction.cc,
@@ -17,8 +15,8 @@ PMTFactory.cc
 
 **Place in** `src/geo/include/RAT`:
 EncapsulatedPMTConstruction.hh,
-GeoLiner.hh,
-GeoLinerHex.hh
 
-Once in place simply run `make`
+Once in place simply run `make`  
+
+The liner files are no longer part of the rat-pac core, they have been moved to `BUTTON-RAT2/src`.
 
