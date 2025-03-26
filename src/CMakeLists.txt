@@ -21,6 +21,8 @@ add_library( buttonobj OBJECT
   centroid.cc
   searchgrid.cc
   BonsaiProc.cc
+  GeoLinerHex.cc
+  GeoLiner.cc
 )
 
 target_include_directories( buttonobj PUBLIC

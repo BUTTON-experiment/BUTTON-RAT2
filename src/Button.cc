@@ -1,5 +1,7 @@
 #include <Button.hh>
 #include <BonsaiProc.hh>
+#include <GeoLinerHex.hh>
+#include <GeoLiner.hh>
 
 namespace BUTTON {
 Button::Button(RAT::AnyParse *p, int argc, char **argv)
@@ -13,6 +15,8 @@ Button::Button(RAT::AnyParse *p, int argc, char **argv)
                              "/models");
   }
   // Initialize a geometry factory
+  new GeoLinerHex();
+  new GeoLiner();
   // Include a new type of processor
   RAT::ProcBlockManager::AppendProcessor<BonsaiProc>();
   // Add a unique component to the datastructure
