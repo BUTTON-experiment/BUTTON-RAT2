@@ -25,8 +25,6 @@ add_library(geo OBJECT
         src/GeoPerfBoxFactory.cc
         src/GeoPerfSphereFactory.cc
         src/GeoPerfTubeFactory.cc
-	src/GeoLiner.cc
-        src/GeoLinerHex.cc
         src/GeoPolyArrayFactory.cc
         src/GeoPolygonFactory.cc
         src/GeoReflectorFactory.cc
