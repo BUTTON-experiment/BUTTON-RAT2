@@ -10,7 +10,7 @@ then
   upstring=${basestring^^}
   mixedstring=${basestring^}
   
-  if [[ "$lower" == "$basestring" ]] && [[ "$upper" == "$upstring" ]] && [[ "$mixed" == "$mixedstring" ]];
+  if [[ "$lower" == "button" ]] && [[ "$upper" == "BUTTON" ]] && [[ "$mixed" == "Button" ]];
   then
           echo -e "\n It appears you have already run this script. There is no need to run it again. \n"
           exit
