@@ -1,4 +1,7 @@
 #include <Slartibartfast.hh>
+#include <BonsaiProc.hh>
+#include <GeoLinerHex.hh>
+#include <GeoLiner.hh>
 
 namespace SLARTIBARTFAST {
 Slartibartfast::Slartibartfast(RAT::AnyParse *p, int argc, char **argv)
@@ -12,7 +15,10 @@ Slartibartfast::Slartibartfast(RAT::AnyParse *p, int argc, char **argv)
                              "/models");
   }
   // Initialize a geometry factory
+  new GeoLinerHex();
+  new GeoLiner();
   // Include a new type of processor
+  RAT::ProcBlockManager::AppendProcessor<BonsaiProc>();
   // Add a unique component to the datastructure
 }
 } // namespace SLARTIBARTFAST
