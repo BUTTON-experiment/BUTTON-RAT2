@@ -1,17 +1,17 @@
-#include <Slartibartfast.hh>
+#include <Button.hh>
 #include <BonsaiProc.hh>
 #include <GeoLinerHex.hh>
 #include <GeoLiner.hh>
 
-namespace SLARTIBARTFAST {
-Slartibartfast::Slartibartfast(RAT::AnyParse *p, int argc, char **argv)
+namespace BUTTON {
+Button::Button(RAT::AnyParse *p, int argc, char **argv)
     : Rat(p, argc, argv) {
   // Append an additional data directory (for ratdb and geo)
-  char *slartibartfastdata = getenv("SLARTIBARTFASTDATA");
-  if (slartibartfastdata != NULL) {
-    ratdb_directories.insert(static_cast<std::string>(slartibartfastdata) +
+  char *buttondata = getenv("BUTTONDATA");
+  if (buttondata != NULL) {
+    ratdb_directories.insert(static_cast<std::string>(buttondata) +
                              "/ratdb");
-    model_directories.insert(static_cast<std::string>(slartibartfastdata) +
+    model_directories.insert(static_cast<std::string>(buttondata) +
                              "/models");
   }
   // Initialize a geometry factory
@@ -21,4 +21,4 @@ Slartibartfast::Slartibartfast(RAT::AnyParse *p, int argc, char **argv)
   RAT::ProcBlockManager::AppendProcessor<BonsaiProc>();
   // Add a unique component to the datastructure
 }
-} // namespace SLARTIBARTFAST
+} // namespace BUTTON
