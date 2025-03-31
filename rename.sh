@@ -1,8 +1,8 @@
 #!/bin/bash
 
-lower='slartibartfast'
-upper='SLARTIBARTFAST'
-mixed='Slartibartfast'
+lower='button'
+upper='BUTTON'
+mixed='Button'
 
 if [ ! -z $1 ]
 then
