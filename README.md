@@ -20,13 +20,11 @@ The most well-supported way of installing RAT-PAC II is via the [ratpac-setup sc
 
 ## Installation
 
-Simply clone this repository and run the script `./rename.sh button`. 
-Then compile to produce the rat database and source file that will be named `button.sh`.
+Simply clone this repository and compile to produce the rat database and source file that will be named `button.sh`.
 
 ```
 git clone git@github.com:LSexton2396/BUTTON-RAT2.git
 cd BUTTON-RAT2/
-./rename.sh button
 make
 ```
 
