@@ -104,7 +104,7 @@ position: [0.0, 0.0, 0.0],
 material: "stainless_steel",
 color: [0.43,0.70,0.90,1.0],
 drawstyle: "solid"
-invisible: 0 // omitted for visualization
+invisible: 1 // omitted for visualization
 }
 {
 name: "GEO",
@@ -153,7 +153,7 @@ invisible: 1 // omitted for visualization
 }
 {
 name: "GEO",
-index: "black_sheet",
+index: "black_sheet", //liner
 valid_begin: [0, 0],
 valid_end: [0, 0],
 mother: "detector_target_gb",
