@@ -5,9 +5,6 @@ Please note that some of these files already exist in RAT-PAC so if you wanted t
 **Place in** `src/geo`:
 CMakeLists.txt
 
-**Place in** `src/geo/src`:
-GeoBuilder.cc (This should be the same as the original, so if its not been been modified can skip)  
-
 **Place in** `src/geo/src/pmt`:
 EncapsulatedPMTConstruction.cc,
 PMTConstruction.cc,
