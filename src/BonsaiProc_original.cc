@@ -157,7 +157,6 @@ RAT::Processor::Result BonsaiProc::Event(RAT::DS::Root *ds, RAT::DS::EV *ev) {
     fit->SetEnergy(fitEnergy);
     fit->SetTime(fitTime);
     fit->SetIntFigureOfMerit("nT", -1);
-    fit->SetIntFigureOfMerit("n9", -1);
     fit->SetIntFigureOfMerit("n100", -1);
     fit->SetIntFigureOfMerit("n400", -1);
     fit->SetIntFigureOfMerit("nOff", -1);
@@ -228,7 +227,6 @@ RAT::Processor::Result BonsaiProc::Event(RAT::DS::Root *ds, RAT::DS::EV *ev) {
     fit->SetEnergy(fitEnergy);
     fit->SetTime(fitTime);
     fit->SetIntFigureOfMerit("nT", nT);
-    fit->SetIntFigureOfMerit("n9", bslike->nwind(bs_bonsai_vtxfit, -3, 6));
     fit->SetIntFigureOfMerit("n100", bslike->nwind(bs_bonsai_vtxfit, -10, 90));
     fit->SetIntFigureOfMerit("n400", bslike->nwind(bs_bonsai_vtxfit, -10, 390));
     fit->SetIntFigureOfMerit("nOff",

@@ -1,6 +1,6 @@
+#include <Button.hh>
 #include <RAT/AnyParse.hh>
 #include <RAT/Rat.hh>
-#include <Button.hh>
 #include <iostream>
 #include <string>
 

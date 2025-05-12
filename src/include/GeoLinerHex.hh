@@ -6,7 +6,7 @@
 namespace BUTTON {
 class GeoLinerHex : public RAT::GeoSolidFactory {
 public:
-  GeoLinerHex() : GeoSolidFactory("Liner_hex") {};
+  GeoLinerHex() : GeoSolidFactory("Liner_hex"){};
   virtual G4VSolid *ConstructSolid(RAT::DBLinkPtr table);
 };
 

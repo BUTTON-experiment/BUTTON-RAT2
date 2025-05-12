@@ -86,16 +86,16 @@ ariadne::ariadne(float *vertex, int nrhits, float *positions, float cos_theta)
         nrdir += 2;
       }
     }
-  delete[] (hit_vectors);
+  delete[](hit_vectors);
   active = NULL;
   clusdir = NULL;
 }
 ariadne::~ariadne(void) {
   delete[] directions;
   if (active != NULL)
-    delete[] (active);
+    delete[](active);
   if (clusdir != NULL)
-    delete[] (clusdir);
+    delete[](clusdir);
 }
 
 /***********************************************************************

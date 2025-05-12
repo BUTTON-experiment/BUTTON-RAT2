@@ -6,10 +6,10 @@
 namespace BUTTON {
 class GeoLiner : public RAT::GeoSolidFactory {
 public:
-  GeoLiner() : GeoSolidFactory("Liner") {};
+  GeoLiner() : GeoSolidFactory("Liner"){};
   virtual G4VSolid *ConstructSolid(RAT::DBLinkPtr table);
 };
 
-} // namespace BUTTON 
+} // namespace BUTTON
 
 #endif
