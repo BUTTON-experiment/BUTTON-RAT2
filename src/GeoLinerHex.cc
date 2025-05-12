@@ -46,9 +46,8 @@ G4VSolid *GeoLinerHex::ConstructSolid(RAT::DBLinkPtr table) {
   G4double liner_thickness = table->GetD("liner_thickness") * CLHEP::mm;
   G4double rmax = table->GetD("r_max") * CLHEP::mm;
   G4double dr = table->GetD("dr") * CLHEP::mm;
-  G4double r_hole = table->GetD("r_hole") * CLHEP::mm; // radius of the holes.
-  //G4double rmax = 1532.0 * CLHEP::mm, dr = 1177.0 * CLHEP::mm, liner_thickness = 0.15 * CLHEP::mm
- ;
+  G4double r_hole = table->GetD("r_hole") * CLHEP::mm; // radius of the sphere that makes the holes.
+
   std::vector<G4TwoVector> polygon(nsect);
   std::vector<G4TwoVector> polygon2(nsect);
   G4double ang = 360*CLHEP::deg/nsect;
@@ -65,49 +64,32 @@ G4VSolid *GeoLinerHex::ConstructSolid(RAT::DBLinkPtr table) {
   G4double scaleA = 1, scaleB = 1;
   
   G4VSolid* liner = new G4ExtrudedSolid(volume_name, polygon, dr, offsetA, scaleA, offsetB, scaleB);
-  G4VSolid* liner2 = new G4ExtrudedSolid(volume_name, polygon, dr, offsetA, scaleA, offsetB, scaleB);
-  liner = new G4UnionSolid(volume_name, liner, liner2, 0, G4ThreeVector(0.,0.,32.*CLHEP::mm));
+  liner = new G4UnionSolid(volume_name, liner, liner, 0, G4ThreeVector(0.,0.,32.*CLHEP::mm));
   
   G4VSolid* innerliner = new G4ExtrudedSolid(volume_name, polygon2, dr-liner_thickness, offsetA, scaleA, offsetB, scaleB);
-  G4VSolid* innerliner2 = new G4ExtrudedSolid(volume_name, polygon2, dr-liner_thickness, offsetA, scaleA, offsetB, scaleB);
-  innerliner = new G4UnionSolid(volume_name, innerliner, innerliner2, 0, G4ThreeVector(0.,0.,32.*CLHEP::mm));
+  innerliner = new G4UnionSolid(volume_name, innerliner, innerliner, 0, G4ThreeVector(0.,0.,32.*CLHEP::mm));
   
   liner = new G4SubtractionSolid(volume_name, liner, innerliner);
   
-  //0, G4ThreeVector(0.,50.*CLHEP::mm,0.*CLHEP::mm)
-  
-  /// Add Liners 
+  /// Add Holes
   if(pmt_bool==1){
-  std::cout << "Encapsulation turned on" << std::endl;     
+    std::cout << "Encapsulation turned on" << std::endl;     
   
-  // Get PMT postion and direction 
-  std::string pmt_table_name = table->GetS("pmt_table");
-  RAT::DBLinkPtr pmt_table = RAT::DB::Get()->GetLink(pmt_table_name);
+    // Get PMT postion and direction 
+    std::string pmt_table_name = table->GetS("pmt_table");
+    RAT::DBLinkPtr pmt_table = RAT::DB::Get()->GetLink(pmt_table_name);
 
-  std::vector<double> x = pmt_table->GetDArray("x"); // get pmt postion 
-  std::vector<double> y = pmt_table->GetDArray("y"); 
-  std::vector<double> z = pmt_table->GetDArray("z"); 
+    std::vector<double> x = pmt_table->GetDArray("x"); // get pmt postion 
+    std::vector<double> y = pmt_table->GetDArray("y"); 
+    std::vector<double> z = pmt_table->GetDArray("z"); 
 
-  std::vector<double> dir_x = pmt_table->GetDArray("dir_x"); // Get pmt direction 
-  std::vector<double> dir_y = pmt_table->GetDArray("dir_x"); // Get pmt direction 
-  std::vector<double> dir_z = pmt_table->GetDArray("dir_x"); // Get pmt direction 
+    int vector_size = x.size();
 
-  int vector_size = x.size();
+    G4Sphere *encapsuation_volume = new G4Sphere(volume_name, 0.* CLHEP::mm, r_hole, phi_start, phi_delta, phi_start, phi_delta/2.0);
 
-  G4RotationMatrix* rotate = new G4RotationMatrix();
-
-  G4Sphere *encapsuation_volume = new G4Sphere(volume_name, 0.* CLHEP::mm, r_hole, phi_start, phi_delta, phi_start, phi_delta);
-
-  for (int i = 0; i < vector_size; i++) {
-
-    rotate->rotateX(dir_x.at(i));
-    rotate->rotateY(dir_y.at(i));
-    rotate->rotateZ(dir_z.at(i));
-
-    //G4RotationMatrix pmtrot = pmt_parser.GetPMTRotation(pmtID);
-    liner = new G4SubtractionSolid(volume_name, liner, encapsuation_volume, 0, G4ThreeVector(x.at(i)* CLHEP::mm,y.at(i)* CLHEP::mm,z.at(i)* CLHEP::mm));
- 
-   }
+    for (int i = 0; i < vector_size; i++) {
+      liner = new G4SubtractionSolid(volume_name, liner, encapsuation_volume, 0, G4ThreeVector(x.at(i)* CLHEP::mm,y.at(i)* CLHEP::mm,z.at(i)* CLHEP::mm));
+    }
   }
   
   return liner;

@@ -819,7 +819,7 @@ name: "MATERIAL",
 index: "polyethelene",
 valid_begin : [0, 0],
 valid_end : [0, 0],
-density: 0.92, //mid value can be changed
+density: 0.46, //mid value can be changed, original 0.92 but liner is double the thickness than required so halved.
 nelements: 2,
 nmaterials: 0,
 elements: ["Hydrogen", "Carbon"], 
