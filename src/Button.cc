@@ -2,6 +2,8 @@
 #include <Button.hh>
 #include <GeoLiner.hh>
 #include <GeoLinerHex.hh>
+#include <ButtonDAQProc.hh>
+
 
 namespace BUTTON {
 Button::Button(RAT::AnyParse *p, int argc, char **argv) : Rat(p, argc, argv) {
@@ -16,6 +18,7 @@ Button::Button(RAT::AnyParse *p, int argc, char **argv) : Rat(p, argc, argv) {
   new GeoLiner();
   // Include a new type of processor
   RAT::ProcBlockManager::AppendProcessor<BonsaiProc>();
+  RAT::ProcBlockManager::AppendProcessor<ButtonDAQProc>();
   // Add a unique component to the datastructure
 }
 } // namespace BUTTON
