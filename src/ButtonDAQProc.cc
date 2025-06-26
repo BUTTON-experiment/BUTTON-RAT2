@@ -17,70 +17,6 @@ namespace BUTTON {
     }
 
 
-    // C++ Program to demonstrate how to implement the quick
-    // sort algorithm from https://www.geeksforgeeks.org/cpp-program-for-quicksort/
-
-    /*
-    int ButtonDAQProc::partition(std::vector<int>& vec, int low, int high) {
-        // Selecting last element as the pivot
-        int pivot = vec[high];
-
-        // Index of element just before the last element
-        // It is used for swapping
-        int i = (low - 1);
-
-        for (int j = low; j <= high - 1; j++) {
-
-            // If current element is smaller than or
-            // equal to pivot
-            if (vec[j] <= pivot) {
-                i++;
-                std::swap(vec[i], vec[j]);
-            }
-        }
-
-        // Put pivot to its position
-        std::swap(vec[i + 1], vec[high]);
-
-        // Return the point of partition
-        return (i + 1);
-    }
-
-    void ButtonDAQProc::quickSort(std::vector<int>& vec, int low, int high) {
-
-        // Base case: This part will be executed till the starting
-        // index low is lesser than the ending index high
-        if (low < high) {
-
-            // pi is Partitioning Index, arr[p] is now at
-            // right place
-            int pi = partition(vec, low, high);
-
-            // Separately sort elements before and after the
-            // Partition Index pi
-            quickSort(vec, low, pi - 1);
-            quickSort(vec, pi + 1, high);
-        }
-    }
-
-    /*
-    int main() {
-        std::vector<int> vec = { 10, 7, 8, 9, 1, 5 };
-        int n = vec.size();
-        // Calling quicksort for the vector vec
-        quickSort(vec, 0, n - 1);
-        //for (auto i : vec) {
-        //    cout << i << " ";
-        //}
-        return 0;
-    }
-
-
-    */
-
-
-
-
 
 
     void ButtonDAQProc::BeginOfRun(RAT::DS::Run* run) {
@@ -225,24 +161,27 @@ namespace BUTTON {
 
         // Need to sort the times
         std::sort(hitTimes.begin(), hitTimes.end()); // Sorts the hit times in ascending order
-        printf("Printing hit times:\n");
-        printf("Hit times: %f %f %f %f %f\n", hitTimes[0], hitTimes[1], hitTimes[2], hitTimes[3], hitTimes[4]);
+        //printf("Printing hit times:\n");
+        //printf("Hit times: %f %f %f %f %f\n", hitTimes[0], hitTimes[1], hitTimes[2], hitTimes[3], hitTimes[4]);
 
 
 
         double lastTrigger = 0;
         std::vector<double> triggerTimes;
         for (int i = 0; i < hitTimes.size() - 3; i++) {
-
+            //printf("i: %d\n", i);
+            //printf("Hit times: %f  %f \n", hitTimes[i + 3], hitTimes[i]);
+            //printf("HitTime difference: %f\n", hitTimes[i + 3] - hitTimes[i]);
             // For each photon, if the photon 3 after it arrived less than 100ns after the original photon, then that means there were at least 4 in that time frame, so add a trigger 
             // Not sure what time to assign the trigger to
             // Then there needs to be some amount of deadtime/trigger window/trigger lockout 
-            if ((hitTimes[i] - lastTrigger) < (lastTrigger + fTriggerWindow + fTriggerLockout)) {
+            if ( (hitTimes[i] - lastTrigger) < (lastTrigger + fTriggerWindow + fTriggerLockout) and (lastTrigger!=0) ){
                 // If the trigger happens while you're saving data or locked out from the trigger, it won't trigger (unless they have a system for 0 deadtime, did they mention this?)
                 continue;
             }
 
-            if ((hitTimes[i + 3] - hitTimes[i]) < 100) { // time units in ns
+            if ((hitTimes[i + 3] - hitTimes[i]) < 100.0) { // time units in ns
+                //printf("Triggering\n");
                 // This means there are 4 photons within ~100ns, so call a trigger
                 // UNLESS I don't want to trigger because of the trigger window/lockout
                 // Dark hits are also included 
@@ -251,10 +190,57 @@ namespace BUTTON {
             }
         }
 
+        // Place the correct hits, charges, etc into the right trigger windows
+        lastTrigger = 0;
+        for (auto tt : triggerTimes) {
+            RAT::DS::EV* ev = ds->AddNewEV();
+            ev->SetID(fEventCounter++);
+            ev->SetCalibratedTriggerTime(tt);
+            ev->SetUTC(mc->GetUTC());
+            ev->SetDeltaT(tt - lastTrigger);
+            lastTrigger = tt;
+            double totalEVCharge = 0;  // What does total charge get used for?
+            for (int imcpmt = 0; imcpmt < mc->GetMCPMTCount(); imcpmt++) {
+                RAT::DS::MCPMT* mcpmt = mc->GetMCPMT(imcpmt);
+                int pmtID = mcpmt->GetID();
+                // Check if the mcpmt has a time within one pulsewidth of the trigger window
+                bool pmtInEvent = false;
+                double integratedCharge = 0;
+                std::vector<double> hitTimes;
+                if (mcpmt->GetMCPhotonCount() > 0) {
+                    for (int pidx = 0; pidx < mcpmt->GetMCPhotonCount(); pidx++) {
+                        RAT::DS::MCPhoton* photon = mcpmt->GetMCPhoton(pidx);
+                        double time = photon->GetFrontEndTime();
+                        if ((time > (tt - fLookback)) && (time < (tt + fTriggerWindow))) {
+                            pmtInEvent = true;
+                            hitTimes.push_back(time);
+                            integratedCharge += photon->GetCharge();
+                        }
+                    }
+                }
+                std::sort(hitTimes.begin(), hitTimes.end());
+                if (pmtInEvent) {
+                    RAT::DS::PMT* pmt = ev->GetOrCreatePMT(pmtID);
+                    double front_end_hit_time = *std::min_element(hitTimes.begin(), hitTimes.end());
+                    // PMT Hit time relative to the trigger
+                    pmt->SetTime(front_end_hit_time - tt);
+                    pmt->SetCharge(integratedCharge);
+                    totalEVCharge += integratedCharge;
+                    if (fDigitize) {
+                        fDigitizer->DigitizePMT(mcpmt, pmtID, tt, pmtinfo);
+                    }
+                }
+            }  // Done looping over PMTs
+
+            if (fDigitize) {
+                fDigitizer->WriteToEvent(ev);
+            }
+
+            ev->SetTotalCharge(totalEVCharge);
+        }
 
 
-
-
+        printf("Number of triggered events: %d\n", triggerTimes.size());
 
 
         return RAT::Processor::OK;
