@@ -205,8 +205,8 @@ namespace BUTTON {
 
 
 
-        double lastTrigger = -100000.0;
-        std::vector<double> triggerTimes;
+
+        
 
 
         std::vector<double> hitTimes;
@@ -231,16 +231,23 @@ namespace BUTTON {
 
 
         double lastTrigger = 0;
+        std::vector<double> triggerTimes;
         for (int i = 0; i < hitTimes.size() - 3; i++) {
 
             // For each photon, if the photon 3 after it arrived less than 100ns after the original photon, then that means there were at least 4 in that time frame, so add a trigger 
             // Not sure what time to assign the trigger to
             // Then there needs to be some amount of deadtime/trigger window/trigger lockout 
+            if ((hitTimes[i] - lastTrigger) < (lastTrigger + fTriggerWindow + fTriggerLockout)) {
+                // If the trigger happens while you're saving data or locked out from the trigger, it won't trigger (unless they have a system for 0 deadtime, did they mention this?)
+                continue;
+            }
+
             if ((hitTimes[i + 3] - hitTimes[i]) < 100) { // time units in ns
                 // This means there are 4 photons within ~100ns, so call a trigger
                 // UNLESS I don't want to trigger because of the trigger window/lockout
                 // Dark hits are also included 
-
+                lastTrigger = hitTimes[i];
+                triggerTimes.push_back(lastTrigger);
             }
         }
 
