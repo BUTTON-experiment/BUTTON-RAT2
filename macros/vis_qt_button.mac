@@ -8,6 +8,8 @@
 # Colors
 /rat/db/set GEO[world] invisible 1
 
+/rat/db/set DAQ[SplitEVDAQ] trigger_threshold 1
+
 /run/initialize
 
 #/tracking/storeTrajectory 1
@@ -35,28 +37,29 @@
 #/vis/viewer/set/viewpointThetaPhi -90 0
 #/vis/viewer/zoomTo 10
 #/vis/viewer/panTo 10 0
-
+/rat/proc splitevdaq
+/rat/proc bonsai
 /rat/proc count
-/rat/procset update 1
+/rat/procset update 10
 
 # Use IO.default_output_filename
 /rat/proclast outroot
 
 ## OUTPUT PYTHON-LIKE FORMAT
 ## Needs RAT2
-#/rat/proc outntuple
-#/rat/procset include_tracking 1
-#/rat/procset include_mcparticles 1
-#/rat/procset include_pmthits 1
-#/rat/procset include_untriggered_events 1
+/rat/proc outntuple
+/rat/procset include_tracking 1
+/rat/procset include_mcparticles 1
+/rat/procset include_pmthits 1
+/rat/procset include_untriggered_events 1
 
 ##### GENERATORS #################
 
-#/generator/add combo pbomb:point:poisson
-#/generator/vtx/set 100 485
-#/generator/pos/set 0. 0. 0.
-#/generator/rate/set 1e7 
+/generator/add combo pbomb:point:poisson
+/generator/vtx/set 100 485
+/generator/pos/set 0. 0. 0.
+/generator/rate/set 1e7 
 #/generator/add/combo cry:point
 #/generator/pos/set 0.0 0.0 2000
 ##### RUN ###########
-#/run/beamOn 1
+/run/beamOn 100

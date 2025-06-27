@@ -232,7 +232,7 @@ orientation: "manual",
 orient_point: [0.,0.,0.],
 color: [0.3,0.5, 0.0, 0.2],
 encapsulation: 1,
-encapsulation_model: "BUTTON",
+encapsulation_model: "BUTTON_r7081pe",
 invisible: 0 // omitted for visualization
 } /*
 {
