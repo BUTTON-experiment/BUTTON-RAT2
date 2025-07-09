@@ -37,6 +37,11 @@ namespace BUTTON {
         fDigitizerType = ldaq->GetS("digitizer_name");
         fDigitize = ldaq->GetZ("digitize");
 
+        printf("fPulseWidth: %f\n", fPulseWidth);
+
+        printf("Digitize value: %s\n", fDigitize ? "true" : "false");
+        
+
         fDigitizer = new RAT::Digitizer(fDigitizerType);
         if (fDigitize) {
             RAT::DS::PMTInfo* pmtinfo = run->GetPMTInfo();
@@ -64,10 +69,10 @@ namespace BUTTON {
         if (ds->ExistEV()) ds->PruneEV();
 
 
-        printf("Summing PMT stuff:\n");
+        //printf("Summing PMT stuff:\n");
         // First loop through the PMTs and create a summed trigger
         std::vector<double> trigPulses;
-        printf("mc GetMCPMTCount: %d \n", mc->GetMCPMTCount());
+        //printf("mc GetMCPMTCount: %d \n", mc->GetMCPMTCount());
         for (int imcpmt = 0; imcpmt < mc->GetMCPMTCount(); imcpmt++) {
             
             RAT::DS::MCPMT* mcpmt = mc->GetMCPMT(imcpmt);
@@ -86,7 +91,7 @@ namespace BUTTON {
             }
         }
 
-        printf("trigPulses.size(): %d\n", trigPulses.size());
+        //printf("trigPulses.size(): %d\n", trigPulses.size());
         if (trigPulses.size() < 1) return Processor::OK;  // We're done, no triggers
 
         double start = *std::min_element(trigPulses.begin(), trigPulses.end());
@@ -158,6 +163,7 @@ namespace BUTTON {
                 hitTimes.push_back(currentTime);
             }
         }
+        
 
         // Need to sort the times
         std::sort(hitTimes.begin(), hitTimes.end()); // Sorts the hit times in ascending order
@@ -204,6 +210,7 @@ namespace BUTTON {
                 RAT::DS::MCPMT* mcpmt = mc->GetMCPMT(imcpmt);
                 int pmtID = mcpmt->GetID();
                 // Check if the mcpmt has a time within one pulsewidth of the trigger window
+                // It's just if the mcpmt has a hit within the trigger window
                 bool pmtInEvent = false;
                 double integratedCharge = 0;
                 std::vector<double> hitTimes;
@@ -225,7 +232,7 @@ namespace BUTTON {
                     // PMT Hit time relative to the trigger
                     pmt->SetTime(front_end_hit_time - tt);
                     pmt->SetCharge(integratedCharge);
-                    totalEVCharge += integratedCharge;
+                    totalEVCharge += integratedCharge; // I think what's happening here is that it's taking the integrated charge from the photons in the trigger window for each pmt and then assigning that to the pmt for later use
                     if (fDigitize) {
                         fDigitizer->DigitizePMT(mcpmt, pmtID, tt, pmtinfo);
                     }
