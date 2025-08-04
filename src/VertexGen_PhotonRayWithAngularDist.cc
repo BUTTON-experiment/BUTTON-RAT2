@@ -472,13 +472,40 @@ G4ThreeVector VertexGen_PhotonRay::TheoreticalMomentumDirectionGeneration()
       mom.set(momentumX, momentumY, momentumZ);
       
 
-
+      
       // Distribute times expoenentially, but don't bother picking a
       // random number if there is no time constant
+      
       double expt = 0.0;
       if(fExpTime > 0.0)
 	      expt = - fExpTime * log(G4UniformRand());
       G4PrimaryVertex* vertex= new G4PrimaryVertex(dx, dt + expt);
+      
+
+      /*
+      // Set the photon production time to chosen values to test different trigger times in the detector
+      double expt = 0.0;
+      int lowest = 0;
+      int range = 2;
+      //for (int i; i < 100; i++) {
+      int randomNumber = lowest + rand() % range;
+      //std::cout << randomNumber << "\n";
+      //}
+      if (randomNumber == 1) {
+          expt = 2000;
+      }
+      else {
+          expt = 1000;
+      }
+      
+
+      G4PrimaryVertex* vertex = new G4PrimaryVertex(dx, dt + expt);
+      */
+
+
+
+
+
 
       // Make a photon with the specified momentum
       G4PrimaryParticle* photon = new G4PrimaryParticle(fOpticalPhoton, momentumX, momentumY, momentumZ);

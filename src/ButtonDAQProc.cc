@@ -23,7 +23,9 @@ namespace BUTTON {
         // Trigger Specifications
         printf("ButtonDAQProc starting BeginOfRun.\n");
 
-        ldaq = RAT::DB::Get()->GetLink("ButtonDAQ");
+
+        //ldaq = RAT::DB::Get()->GetLink("ButtonDAQ");
+        ldaq = RAT::DB::Get()->GetLink("DAQ", "ButtonDAQ");
         fEventCounter = 0;
         fPulseWidth = ldaq->GetD("pulse_width");
         fTriggerThreshold = ldaq->GetD("trigger_threshold");
@@ -92,8 +94,12 @@ namespace BUTTON {
         }
 
         //printf("trigPulses.size(): %d\n", trigPulses.size());
-        if (trigPulses.size() < 1) return Processor::OK;  // We're done, no triggers
 
+        if (trigPulses.size() < 1) {
+            std::cout << "### No hits; not triggering; ending.\n";
+            return Processor::OK;  // We're done, no triggers
+
+        }
         double start = *std::min_element(trigPulses.begin(), trigPulses.end());
         start = floor(start / fTriggerResolution) * fTriggerResolution;
         double end = *std::max_element(trigPulses.begin(), trigPulses.end());
@@ -112,9 +118,14 @@ namespace BUTTON {
             int select = int((v - start) / bw);
             triggerTrain[select] += 1.0;
         }
+        // The bin width of this histogram is bw, which is just fTriggerResolution
 
 
 
+        // This next bit then spreads the bins out from fTriggerResolution's bin width to the wider fPulseWidth
+        // This has importance if you're counting the height of the bins, but we trigger a different way so this isn't necessary, and in the current implementation is causing multiple counting of single hits, so it's removed.
+        /*  At the moment I think this is causing the trigger to count 1 hit multiple times
+        
         // Spread each bin out to the trigger pulse width to pass to a discriminator
         //             |
         //.............|_____ .... trigger threshold .....
@@ -134,6 +145,7 @@ namespace BUTTON {
                 } while (j < i + int(fPulseWidth / bw));
             }
         }
+        */
 
 
         // For button, want a trigger based on obtaining 4 hits within ~100ns of each other
@@ -142,7 +154,6 @@ namespace BUTTON {
         // So to replicate this behaviour, I could...
         // sort the trigger times and check - loop through and if the trigger 3 in front of the current one is <100 ms away trigger the event
         // Do I need multiple triggers at different points? 
-        // How long does it save data for?
 
 
 
@@ -157,7 +168,8 @@ namespace BUTTON {
         // You'd want the quantised time since the system is going to have a particular sample rate (the "trigger resolution"?)
         for (int i = 0; i < nbins; i++) {
             currentTime = (i * bw) + start;
-            double v = triggerHistogram[i];
+            //double v = triggerHistogram[i];
+            double v = triggerTrain[i];
             if (v == 0) continue;
             for (int j = 0; j < v; j++) {
                 hitTimes.push_back(currentTime);
@@ -168,86 +180,104 @@ namespace BUTTON {
         // Need to sort the times
         std::sort(hitTimes.begin(), hitTimes.end()); // Sorts the hit times in ascending order
         //printf("Printing hit times:\n");
-        //printf("Hit times: %f %f %f %f %f\n", hitTimes[0], hitTimes[1], hitTimes[2], hitTimes[3], hitTimes[4]);
-
+        //printf("Hit times: %f %f %f %f %f\n", hitTimes[0], hitTimes[1], hitTimes[2], hitTimes[hitTimes.size()-2], hitTimes[hitTimes.size()-1]);
+        std::cout << "### Number of hits in hitTimes: " << hitTimes.size() << "\n";
 
 
         double lastTrigger = 0;
         std::vector<double> triggerTimes;
-        for (int i = 0; i < hitTimes.size() - 3; i++) {
-            //printf("i: %d\n", i);
-            //printf("Hit times: %f  %f \n", hitTimes[i + 3], hitTimes[i]);
-            //printf("HitTime difference: %f\n", hitTimes[i + 3] - hitTimes[i]);
-            // For each photon, if the photon 3 after it arrived less than 100ns after the original photon, then that means there were at least 4 in that time frame, so add a trigger 
-            // Not sure what time to assign the trigger to
-            // Then there needs to be some amount of deadtime/trigger window/trigger lockout 
-            if ( (hitTimes[i] - lastTrigger) < (lastTrigger + fTriggerWindow + fTriggerLockout) and (lastTrigger!=0) ){
-                // If the trigger happens while you're saving data or locked out from the trigger, it won't trigger (unless they have a system for 0 deadtime, did they mention this?)
-                continue;
-            }
+        
+        /*
+        bool alwaysTrigger = true;
+        if (alwaysTrigger) {
+            triggerTimes.push_back(hitTimes[0]);
 
-            if ((hitTimes[i + 3] - hitTimes[i]) < 100.0) { // time units in ns
-                //printf("Triggering\n");
-                // This means there are 4 photons within ~100ns, so call a trigger
-                // UNLESS I don't want to trigger because of the trigger window/lockout
-                // Dark hits are also included 
-                lastTrigger = hitTimes[i];
-                triggerTimes.push_back(lastTrigger);
+        }
+        else */
+        if (hitTimes.size() > 3) {
+            for (int i = 0; i < hitTimes.size() - 3; i++) {
+                //printf("i: %d\n", i);
+                std::cout << "Hit times: " << hitTimes[i] << " " << hitTimes[i + 3] << "\n";
+                //printf("HitTime difference: %f\n", hitTimes[i + 3] - hitTimes[i]);
+                // For each photon, if the photon 3 after it arrived less than 100ns after the original photon, then that means there were at least 4 in that time frame, so add a trigger 
+                // Not sure what time to assign the trigger to
+                // Then there needs to be some amount of deadtime/trigger window/trigger lockout 
+                if ((hitTimes[i] - lastTrigger) < (fTriggerWindow + fTriggerLockout) and (lastTrigger != 0)) {   // (lastTrigger + fTriggerWindow + fTriggerLockout) and (lastTrigger != 0)) {
+                    // Shouldn't have lastTrigger in second condition because it should be a relative time
+                    //std::cout << "hitTimes-lastTrigger: " << hitTimes[i] - lastTrigger << "\n";
+                    //std::cout << "lastTrigger + triggerWindow + triggerLockout: " << lastTrigger + fTriggerWindow + fTriggerLockout << "\n";
+                    // If the trigger happens while you're saving data or locked out from the trigger, it won't trigger (unless they have a system for 0 deadtime, did they mention this?)
+                    continue;
+                }
+
+                if ((hitTimes[i + 3] - hitTimes[i]) < 100.0) { // time units in ns
+                    std::cout << "Triggering:";
+                    //printf("Triggering\n");
+                    // This means there are 4 photons within ~100ns, so call a trigger
+                    // UNLESS I don't want to trigger because of the trigger window/lockout
+                    // Dark hits are also included 
+                    lastTrigger = hitTimes[i];
+                    triggerTimes.push_back(lastTrigger);
+                    std::cout << "Trigger activated for time " << lastTrigger << "\n";
+                }
             }
         }
 
         // Place the correct hits, charges, etc into the right trigger windows
         lastTrigger = 0;
-        for (auto tt : triggerTimes) {
-            RAT::DS::EV* ev = ds->AddNewEV();
-            ev->SetID(fEventCounter++);
-            ev->SetCalibratedTriggerTime(tt);
-            ev->SetUTC(mc->GetUTC());
-            ev->SetDeltaT(tt - lastTrigger);
-            lastTrigger = tt;
-            double totalEVCharge = 0;  // What does total charge get used for?
-            for (int imcpmt = 0; imcpmt < mc->GetMCPMTCount(); imcpmt++) {
-                RAT::DS::MCPMT* mcpmt = mc->GetMCPMT(imcpmt);
-                int pmtID = mcpmt->GetID();
-                // Check if the mcpmt has a time within one pulsewidth of the trigger window
-                // It's just if the mcpmt has a hit within the trigger window
-                bool pmtInEvent = false;
-                double integratedCharge = 0;
-                std::vector<double> hitTimes;
-                if (mcpmt->GetMCPhotonCount() > 0) {
-                    for (int pidx = 0; pidx < mcpmt->GetMCPhotonCount(); pidx++) {
-                        RAT::DS::MCPhoton* photon = mcpmt->GetMCPhoton(pidx);
-                        double time = photon->GetFrontEndTime();
-                        if ((time > (tt - fLookback)) && (time < (tt + fTriggerWindow))) {
-                            pmtInEvent = true;
-                            hitTimes.push_back(time);
-                            integratedCharge += photon->GetCharge();
+        if (triggerTimes.size() > 0) {
+            for (auto tt : triggerTimes) {
+                RAT::DS::EV* ev = ds->AddNewEV();
+                ev->SetID(fEventCounter++);
+                ev->SetCalibratedTriggerTime(tt);
+                ev->SetUTC(mc->GetUTC());
+                ev->SetDeltaT(tt - lastTrigger);
+                lastTrigger = tt;
+                double totalEVCharge = 0;  // What does total charge get used for?
+                for (int imcpmt = 0; imcpmt < mc->GetMCPMTCount(); imcpmt++) {
+                    RAT::DS::MCPMT* mcpmt = mc->GetMCPMT(imcpmt);
+                    int pmtID = mcpmt->GetID();
+                    // Check if the mcpmt has a time within one pulsewidth of the trigger window
+                    // It's just if the mcpmt has a hit within the trigger window
+                    bool pmtInEvent = false;
+                    double integratedCharge = 0;
+                    std::vector<double> hitTimes;
+                    if (mcpmt->GetMCPhotonCount() > 0) {
+                        for (int pidx = 0; pidx < mcpmt->GetMCPhotonCount(); pidx++) {
+                            RAT::DS::MCPhoton* photon = mcpmt->GetMCPhoton(pidx);
+                            double time = photon->GetFrontEndTime();
+                            if ((time > (tt - fLookback)) && (time < (tt + fTriggerWindow))) {
+                                pmtInEvent = true;
+                                hitTimes.push_back(time);
+                                integratedCharge += photon->GetCharge();
+                            }
                         }
                     }
-                }
-                std::sort(hitTimes.begin(), hitTimes.end());
-                if (pmtInEvent) {
-                    RAT::DS::PMT* pmt = ev->GetOrCreatePMT(pmtID);
-                    double front_end_hit_time = *std::min_element(hitTimes.begin(), hitTimes.end());
-                    // PMT Hit time relative to the trigger
-                    pmt->SetTime(front_end_hit_time - tt);
-                    pmt->SetCharge(integratedCharge);
-                    totalEVCharge += integratedCharge; // I think what's happening here is that it's taking the integrated charge from the photons in the trigger window for each pmt and then assigning that to the pmt for later use
-                    if (fDigitize) {
-                        fDigitizer->DigitizePMT(mcpmt, pmtID, tt, pmtinfo);
+                    std::sort(hitTimes.begin(), hitTimes.end());
+                    if (pmtInEvent) {
+                        RAT::DS::PMT* pmt = ev->GetOrCreatePMT(pmtID);
+                        double front_end_hit_time = *std::min_element(hitTimes.begin(), hitTimes.end());
+                        // PMT Hit time relative to the trigger
+                        pmt->SetTime(front_end_hit_time - tt);
+                        pmt->SetCharge(integratedCharge);
+                        totalEVCharge += integratedCharge; // I think what's happening here is that it's taking the integrated charge from the photons in the trigger window for each pmt and then assigning that to the pmt for later use
+                        if (fDigitize) {
+                            fDigitizer->DigitizePMT(mcpmt, pmtID, tt, pmtinfo);
+                        }
                     }
+                }  // Done looping over PMTs
+
+                if (fDigitize) {
+                    fDigitizer->WriteToEvent(ev);
                 }
-            }  // Done looping over PMTs
 
-            if (fDigitize) {
-                fDigitizer->WriteToEvent(ev);
+                ev->SetTotalCharge(totalEVCharge);
             }
-
-            ev->SetTotalCharge(totalEVCharge);
         }
 
 
-        printf("Number of triggered events: %d\n", triggerTimes.size());
+        std::cout << "Number of triggered events: " << triggerTimes.size() << "\n";
+        //printf(;
 
 
         return RAT::Processor::OK;
