@@ -23,7 +23,7 @@ The most well-supported way of installing RAT-PAC II is via the [ratpac-setup sc
 Simply clone this repository and compile to produce the rat database and source file that will be named `button.sh`.
 
 ```
-git clone git@github.com:LSexton2396/BUTTON-RAT2.git
+git clone https://github.com/BUTTON-experiment/BUTTON-RAT2.git
 cd BUTTON-RAT2/
 make
 ```
