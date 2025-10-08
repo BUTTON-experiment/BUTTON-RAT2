@@ -8,9 +8,9 @@
 # Colors
 #/rat/db/set GEO[world] invisible 1
 #/rat/db/set GEO[tank] invisible 1
-#/rat/db/set GEO[black_sheet] invisible 1
+#/rat/db/set GEO[black_sheet] invisible 0
 
- 
+
 
 /run/initialize
 
@@ -75,7 +75,7 @@
 ##### GENERATORS #################
 
 
-/generator/add combo pray:point:poisson
+/generator/add combo diffuser:point:poisson
 
 # Lower diffuser # DA37
 /generator/vtx/set 150 405 90 90

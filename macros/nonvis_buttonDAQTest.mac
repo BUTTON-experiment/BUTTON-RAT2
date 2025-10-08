@@ -72,17 +72,15 @@
 ##### GENERATORS #################
 
 
-/generator/add combo pray:point:poisson
+/generator/add combo diffuser:point:poisson
 
 # Lower diffuser # DA37
 /generator/vtx/set 256 405 90 90
 /generator/pos/set 70.0 -1358.8 -540.0
 
 # x = 0+70mm, position of diffuser relative to frame
-# y = -1487.5+9 + 19.2mm to go past liner as there are no holes for diffusers yet
+# y = -1358.8mm to go past liner as there are no holes for diffusers yet
 # z = -540mm for lower half diffuser
-
-#/generator/rate/set 1e7
 
 # Upper diffuser opposite: # DA38
 #/generator/vtx/set 20000 405 90 -90

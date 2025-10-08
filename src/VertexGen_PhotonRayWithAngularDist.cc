@@ -560,7 +560,7 @@ G4ThreeVector VertexGen_PhotonRay::TheoreticalMomentumDirectionGeneration()
     is >> macroArgPhi;
     std::cout << macroArgPhi << "\n";
     std::cout << "Checking input stream arguments.\n";
-    std::cout << "Does is fail?:" << is.fail() << "\n";
+    std::cout << "Does input stream fail?:" << is.fail() << "\n";
 
     if (is.fail()){
       // check for scintillation wavelength spectrum
