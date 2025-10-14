@@ -23,6 +23,8 @@ add_library( buttonobj OBJECT
   BonsaiProc.cc
   GeoLinerHex.cc
   GeoLiner.cc
+  ButtonDAQProc.cc
+  VertexGen_PhotonRayWithAngularDist.cc
 )
 
 target_include_directories( buttonobj PUBLIC
