@@ -10,8 +10,8 @@ constant_fraction: 0.40,
 // Number of samples to look back after the peak
 lookback: 20.0,
 // Integration window, in samples
-integration_window_low: 4,
-integration_window_high: 10,
+integration_window_low: 25, // This is the number of samples below the peak to include in the integration window
+integration_window_high: 25, // This is the number of samples above the peak to include in the integration window
 // Sliding integration window, in samples
 sliding_window_width: 10,
 // Charge threshold to contribute to total charge
@@ -72,4 +72,16 @@ fit_window_high: 15.0,
 num_interp_points: 8,
 tapering_constant: 30.0,
 num_sinc_lobes: 6
+}
+
+{
+name: "DIGITIZER_ANALYSIS",
+index: "ButtonWaveformAnalysis",
+valid_begin: [0,0],
+valid_end: [0,0],
+integration_low_samples: 25,
+integration_high_samples: 25,
+testint: 1
+pedestal_window_low: 0,
+pedestal_window_high: 10,
 }

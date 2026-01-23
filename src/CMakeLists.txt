@@ -25,6 +25,7 @@ add_library( buttonobj OBJECT
   GeoLiner.cc
   ButtonDAQProc.cc
   VertexGen_PhotonRayWithAngularDist.cc
+  ButtonWaveformProc.cc
 )
 
 target_include_directories( buttonobj PUBLIC
