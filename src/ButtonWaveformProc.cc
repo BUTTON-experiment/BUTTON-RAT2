@@ -17,14 +17,7 @@ namespace BUTTON {
     // Constructor, if it has no argument then it sends "ButtonWaveformAnalysis", which is the index of the DIGITIZER_ANALYSIS ratdb entry with the correct parameters
     ButtonWaveProc::ButtonWaveProc() : RAT::Processor("buttonWave") {
         printf("ButtonWaveProc: Initialisation of the Button Waveform processor.\n");
-    }    //ButtonWaveProc::ButtonWaveProc("ButtonWaveformAnalysis") {}
-
-    // Constructor with analyzer name given, not sure where you would specify this outside of the code, perhaps the macro?  Either way, inherits from RAT::Processor as a "buttonWave" processor, which is the name you use to call it in the macro
-    //ButtonWaveProc::ButtonWaveProc(std::string analyzer_name) : RAT::Processor("buttonWave") { 
-    //    printf("ButtonWaveProc: Initialisation of the Button waveform processor.\n");
-    //    std::cout << "Using analysis name: " << analyzer_name << "\n";
-    //    Configure(analyzer_name);
-    //}
+    }   
 
     // configure is used for changing the analysis name on the fly if you have multiple different versions of the analysis to run on the same data (such as with different parameters)
     void ButtonWaveProc::Configure() { // const std::string& analyzer_name
