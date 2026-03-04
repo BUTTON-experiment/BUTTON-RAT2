@@ -4,6 +4,7 @@
 #include <GeoLiner.hh>
 #include <GeoLinerHex.hh>
 #include <VertexGen_PhotonRayWithAngularDist.hh>
+#include <ButtonWaveformProc.hh>
 
 /*
 #include <RAT/GLG4PrimaryGeneratorAction.hh>
@@ -33,14 +34,13 @@ Button::Button(RAT::AnyParse *p, int argc, char **argv) : Rat(p, argc, argv) {
   // Include a new type of processor
   RAT::ProcBlockManager::AppendProcessor<BonsaiProc>();
   RAT::ProcBlockManager::AppendProcessor<ButtonDAQProc>();
-  // Add a unique component to the datastructure
+  RAT::ProcBlockManager::AppendProcessor<ButtonWaveProc>();
+
 
   // Add a generator
 
-  // RAT::GlobalFactory<GLG4Gen>::Register("pray", new RAT::Alloc<GLG4Gen,
-  // VertexGen_PhotonRay>);
-  RAT::GlobalFactory<GLG4VertexGen>::Register(
-      "diffuser", new RAT::Alloc<GLG4VertexGen, VertexGen_PhotonRay>);
-  // RAT::GlobalFactory<GLG4VertexGen>::Register();
+  RAT::GlobalFactory<GLG4VertexGen>::Register("diffuser", new RAT::Alloc<GLG4VertexGen, VertexGen_PhotonRay>);
+  //RAT::GlobalFactory<GLG4VertexGen>::Register();
+
 }
 } // namespace BUTTON

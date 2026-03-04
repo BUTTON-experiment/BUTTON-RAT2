@@ -13,7 +13,7 @@
 namespace BUTTON {
 
     ButtonDAQProc::ButtonDAQProc() : RAT::Processor("buttondaq") {
-        printf("ButtonDAQProc: Initialisation of the Button processor.\n");
+        printf("ButtonDAQProc: Initialisation of the Button DAQ processor.\n");
     }
 
 
@@ -170,7 +170,7 @@ namespace BUTTON {
 					// It doesn't have a significant impact on the analysis yet, but may need setting if the need arises.
                     if ((hitTimes[i] - lastTrigger) < (fTriggerWindow + fTriggerLockout) and (lastTrigger != 0)) {  
                         //std::cout << "hitTimes-lastTrigger: " << hitTimes[i] - lastTrigger << "\n";
-                        // If the trigger happens while you're saving data or locked out from the trigger, it won't trigger (But for Button there is apparently 0 deadtime, so this shouldn't happen)
+                        // If the trigger happens while you're saving data or locked out from the trigger, it won't trigger (But for Button there is apparently 0 deadtime, so the lockout shouldn't happen) <- for clarity, it can happen during the trigger window - this prevents multiple triggers on the same photons
                         continue;
                     }
 
