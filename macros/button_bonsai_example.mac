@@ -8,8 +8,9 @@
 /rat/db/set DETECTOR geo_file "BUTTON/button_frame.geo"
 
 #Make sure these are included so the ntuple file contains the button informaiton
-/rat/db/set IO[NtupleProc] event_fitters ["Bonsai"]
-/rat/db/set IO[NtupleProc] event_fitter_FOM_Bonsai ["n9","energy","time","validpostion","validdirection","validenergy","validtime"]
+### A further update this has now been moved to the IO.ratdb file in /ratdb you no longer need to add it here but edit this file if you make new varibles. 
+#/rat/db/set IO[NtupleProc] event_fitters ["Bonsai"]
+#/rat/db/set IO[NtupleProc] event_fitter_FOM_Bonsai ["n9","energy","time","validpostion","validdirection","validenergy","validtime"]
 
 ##### This set the parameters of the fitter 
 /rat/db/set BONSAI likelihoodFileName  "/models/bonsai/like.bin.button.wgd" ## there should be a like.bin for each media type 
