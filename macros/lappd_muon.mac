@@ -1,0 +1,39 @@
+### example macro for running the LAPPD
+
+/glg4debug/glg4param omit_muon_processes 1.0
+/glg4debug/glg4param omit_hadronic_processes 1.0
+
+/rat/db/set DETECTOR experiment "LAPPD"
+/rat/db/set DETECTOR geo_file "LAPPD/LAPPD.geo"
+
+/run/initialize
+
+/rat/proc forcedtrigger
+#/rat/procset trigger_threshold 5.0
+
+/rat/proc count
+/rat/procset update 100
+
+##### GEN 2 #########
+/rat/proc LAPPDGen2Proc  #Add the LAPPD processor 
+/rat/proc outntuple
+/rat/procset file "LAPPD_muon_4GeV.root"   ### set output file name 
+
+# Tell the ntuple to look for the LAPPD objects we just filled
+/rat/procset include_lappdhits 1
+/rat/procset include_pmthits 1
+#/rat/procset include_tracking 1
+
+#/generator/add combo pbomb:point:poisson
+#/generator/vtx/set 100 485
+#/generator/add combo diffuser:point:poisson
+#/generator/vtx/set 100 405 10 10
+#/generator/pos/set 0.0 0. 0.0
+
+# Central 4 GeV muom pointing stright up 
+/generator/add combo gun:point:poisson
+/generator/vtx/set mu- 0.0 0.0 -1.0 4000
+/generator/pos/set 0.0 0.0 0.0
+/generator/rate/set 2.0
+
+/run/beamOn 100
