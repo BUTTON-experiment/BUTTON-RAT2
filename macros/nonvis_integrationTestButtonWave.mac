@@ -10,7 +10,9 @@
 #/rat/db/set GEO[tank] invisible 1
 #/rat/db/set GEO[black_sheet] invisible 1
 
-
+#Make sure these are included so the ntuple file contains the button information
+/rat/db/set IO[NtupleProc] event_fitters ["Bonsai"]
+/rat/db/set IO[NtupleProc] event_fitter_FOM_Bonsai ["n9","energy","time","validpostion","validdirection","validenergy","validtime"]
 
 /run/initialize
 
@@ -66,7 +68,7 @@
 /rat/procset include_digitizerhits 1
 /rat/procset include_digitizerfits 1
 /rat/procset include_digitizerwaveforms 1
-/rat/procset file "integrationTest_low25_high25.ntuple.root"
+/rat/procset file "integrationTest_1e4events.ntuple.root"
 
 
 
@@ -113,4 +115,4 @@
 #/rat/proc outroot
 
 ##### RUN ###########
-/run/beamOn 1
+/run/beamOn 10000

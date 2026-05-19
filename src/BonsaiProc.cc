@@ -156,17 +156,17 @@ RAT::Processor::Result BonsaiProc::Event(RAT::DS::Root *ds, RAT::DS::EV *ev) {
     fit->SetDirection(fitDirection);
     fit->SetEnergy(fitEnergy);
     fit->SetTime(fitTime);
-    fit->SetIntFigureOfMerit("nT", -1);
-    fit->SetIntFigureOfMerit("n9", -1);
-    fit->SetIntFigureOfMerit("n100", -1);
-    fit->SetIntFigureOfMerit("n400", -1);
-    fit->SetIntFigureOfMerit("nOff", -1);
+    fit->SetFigureOfMerit("nT", -1);
+    fit->SetFigureOfMerit("n9", -1);
+    fit->SetFigureOfMerit("n100", -1);
+    fit->SetFigureOfMerit("n400", -1);
+    fit->SetFigureOfMerit("nOff", -1);
 
-    fit->SetDoubleFigureOfMerit("positionGoodness", -1.0);
-    fit->SetDoubleFigureOfMerit("closestPMT", -1.0);
-    fit->SetDoubleFigureOfMerit("directionGoodness", -1.0);
-    fit->SetDoubleFigureOfMerit("azimuthKS", -1.0);
-    fit->SetDoubleFigureOfMerit("distpmt", -1.0);
+    fit->SetFigureOfMerit("positionGoodness", -1.0);
+    fit->SetFigureOfMerit("closestPMT", -1.0);
+    fit->SetFigureOfMerit("directionGoodness", -1.0);
+    fit->SetFigureOfMerit("azimuthKS", -1.0);
+    fit->SetFigureOfMerit("distpmt", -1.0);
 
     ev->AddFitResult(fit);
 
@@ -227,22 +227,22 @@ RAT::Processor::Result BonsaiProc::Event(RAT::DS::Root *ds, RAT::DS::EV *ev) {
     fit->SetDirection(fitDirection);
     fit->SetEnergy(fitEnergy);
     fit->SetTime(fitTime);
-    fit->SetIntFigureOfMerit("nT", nT);
-    fit->SetIntFigureOfMerit("n9", bslike->nwind(bs_bonsai_vtxfit, -3, 6));
-    fit->SetIntFigureOfMerit("n100", bslike->nwind(bs_bonsai_vtxfit, -10, 90));
-    fit->SetIntFigureOfMerit("n400", bslike->nwind(bs_bonsai_vtxfit, -10, 390));
-    fit->SetIntFigureOfMerit("nOff",
+    fit->SetFigureOfMerit("nT", nT);
+    fit->SetFigureOfMerit("n9", bslike->nwind(bs_bonsai_vtxfit, -3, 6));
+    fit->SetFigureOfMerit("n100", bslike->nwind(bs_bonsai_vtxfit, -10, 90));
+    fit->SetFigureOfMerit("n400", bslike->nwind(bs_bonsai_vtxfit, -10, 390));
+    fit->SetFigureOfMerit("nOff",
                              bslike->nwind(bs_bonsai_vtxfit, -150, -50));
-    fit->SetDoubleFigureOfMerit("positionGoodness", bs_goodn[0]);
+    fit->SetFigureOfMerit("positionGoodness", bs_goodn[0]);
     float r2pmt =
         bsgeom->cylinder_radius() -
         sqrt(bsfit->xfit() * bsfit->xfit() + bsfit->yfit() * bsfit->yfit());
     float z2pmt =
         bsgeom->cylinder_height() - sqrt(bsfit->zfit() * bsfit->zfit());
-    fit->SetDoubleFigureOfMerit("closestPMT",
+    fit->SetFigureOfMerit("closestPMT",
                                 (r2pmt < z2pmt) ? r2pmt * 10. : z2pmt * 10.);
-    fit->SetDoubleFigureOfMerit("directionGoodness", bs_agoodn);
-    fit->SetDoubleFigureOfMerit(
+    fit->SetFigureOfMerit("directionGoodness", bs_agoodn);
+    fit->SetFigureOfMerit(
         "azimuthKS", azimuth_ks(nTwin, apmt, bs_bonsai_vtxfit, bs_dir));
     bs_vertex[0] = (double)bs_bonsai_vtxfit[0];
     bs_vertex[1] = (double)bs_bonsai_vtxfit[1];
@@ -250,7 +250,7 @@ RAT::Processor::Result BonsaiProc::Event(RAT::DS::Root *ds, RAT::DS::EV *ev) {
     bs_ddir[0] = (double)bs_dir[0];
     bs_ddir[1] = (double)bs_dir[1];
     bs_ddir[2] = (double)bs_dir[2];
-    fit->SetDoubleFigureOfMerit(
+    fit->SetFigureOfMerit(
         "distpmt", distpmt(bs_vertex, bs_ddir, bsgeom->cylinder_radius(),
                            bsgeom->cylinder_height(), bs_wall));
     ev->AddFitResult(fit);
